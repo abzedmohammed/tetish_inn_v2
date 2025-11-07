@@ -1,9 +1,11 @@
 import { adminRoutes } from "./adminRoutes";
 import { authRoutes } from "./authRoutes";
 import { homeRoutes } from "./homeRoutes";
+import { userRoutes } from "./userRoutes";
 
 export const ROLE_ROUTE_MAPPING = {
 	ADMIN: [...adminRoutes],
+	USER: [...userRoutes],
 };
 
 export const getRoutesForRole = (userRole) => {

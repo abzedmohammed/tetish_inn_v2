@@ -17,3 +17,25 @@ export const notifySuccess = (message) => {
 export const notifyError = (message) => {
     onError(message, errorNotification);
 };
+
+export const passwordChecks = [
+    {
+        label: "At least 8 characters",
+        valid: (val) => val?.length >= 8,
+    },
+    {
+        label: "One upper case letter",
+        valid: (val) => /[A-Z]/.test(val),
+    },
+    {
+        label: "At least one number",
+        valid: (val) => /\d/.test(val),
+    },
+    {
+        label: "Use a symbol (e.g. !@#)",
+        valid: (val) => /[!@#$%^&*()_+\-=[\]{};':",./<>?`~]/.test(val),
+    },
+];
+
+export const passwordOk = "#b45309";
+export const passwordDefault = "#545454";

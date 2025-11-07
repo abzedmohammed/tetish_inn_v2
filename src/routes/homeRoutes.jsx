@@ -1,6 +1,6 @@
 import { HomeLayout } from '../components/layout';
-import { ErrorPage } from '../pages';
-import { Login } from '../pages/auth';
+import { ErrorPage, Home } from '../pages';
+
 export const homeRoutes = [
 	{
 		path: '',
@@ -9,7 +9,7 @@ export const homeRoutes = [
 		children: [
 			{
 				path: '',
-				element: <Login />,
+				element: <Home />,
 			},
 		],
 	},

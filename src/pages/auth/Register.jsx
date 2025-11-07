@@ -1,43 +1,48 @@
-import { Form } from 'antd';
+import { Form } from "antd";
 import {
-	AuthLogoComponent,
-	AuthSideComponent,
-	RegisterFormComponent,
-} from './auth_components';
-import { useDynamicMutation } from "abzed-utils";
-import { registerAction } from '../../actions/authActions';
-import { notifyError } from '../../utils';
+    AuthLogoComponent,
+    AuthSideComponent,
+    RegisterFormComponent,
+} from "./auth_components";
+import { useDynamicMutation, validatePassword } from "abzed-utils";
+import { registerAction } from "../../actions/authActions";
+import { notifyError } from "../../utils";
 
 export default function Register() {
-	const [form] = Form.useForm();
+    const [form] = Form.useForm();
+    const watchedPassword = Form.useWatch("password", form);
 
-	const requestMutation = useDynamicMutation({
-		mutationFn: registerAction.mutationFn,
-		onError: notifyError,
-		onSuccess: registerAction.onSuccess,
-	});
+    const requestMutation = useDynamicMutation({
+        mutationFn: registerAction.mutationFn,
+        onError: notifyError,
+        onSuccess: registerAction.onSuccess,
+    });
 
-	async function onFinish(params) {
-		requestMutation.mutate({ ...params, form });
-	}
+    async function onFinish(params) {
+        let isPasswordValid = validatePassword(params.password);
 
-	return (
-		<div className='auth_main'>
-			<div className='auth_side_componnet'>
-				<AuthSideComponent />
-			</div>
+		if (typeof isPasswordValid === 'string') {
+			return notifyError(isPasswordValid);
+		}
 
-			<div className='auth_main_component'>
-				<AuthLogoComponent
-					component={
-						<RegisterFormComponent
-							form={form}
-							onFinish={onFinish}
-							isProcessing={requestMutation.isPending}
-						/>
-					}
-				/>
-			</div>
-		</div>
-	);
+        params.profile = "USER";
+        requestMutation.mutate({ ...params, form });
+    }
+
+    return (
+        <div className="auth_main">
+            <div className="auth_main_component">
+                <AuthLogoComponent
+                    component={
+                        <RegisterFormComponent
+                            form={form}
+                            onFinish={onFinish}
+                            isProcessing={requestMutation.isPending}
+                            watchedPassword={watchedPassword}
+                        />
+                    }
+                />
+            </div>
+        </div>
+    );
 }

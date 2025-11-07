@@ -32,16 +32,16 @@ export default function LoginFormComponent({ form, onFinish, isProcessing }) {
             <AntdForm form={form} handleSubmit={onFinish} formName={"login"}>
                 <div className="w-full fx_col gap-5">
                     <FormInput
-                        label={"ID Number"}
+                        label={"Email"}
                         inputClassName={"auth_input"}
-                        inputName={"usrNationalId"}
-                        placeholder={"Enter your ID number"}
+                        inputName={"email"}
+                        placeholder={"Enter your email"}
                     />
 
                     <FormInputPassword
                         label={"Password"}
                         inputClassName={"auth_input"}
-                        inputName={"usrEncryptedPassword"}
+                        inputName={"password"}
                         placeholder="Password"
                     />
 

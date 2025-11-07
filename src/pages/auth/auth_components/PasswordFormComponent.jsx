@@ -6,6 +6,7 @@ import {
     AntdForm,
 } from "abzed-utils";
 import { ArrowLeftSvg } from "../../../svgs";
+import { passwordChecks, passwordDefault, passwordOk } from "../../../utils";
 
 export default function PasswordFormComponent({
     form,
@@ -19,17 +20,12 @@ export default function PasswordFormComponent({
 }) {
     const pswd = watchedValues?.usrEncryptedPassword || "";
 
-    const has8Chars = pswd.length >= 8;
-    const hasUpperCase = /[A-Z]/.test(pswd);
-    const hasNumber = /\d/.test(pswd);
-    const hasSymbol = /[!@#$%^&*()_+\-=[\]{};':",./<>?`~]/.test(pswd);
-
     return (
         <div className="p-3 md:p-0 fx_col gap-[1.88rem] mt-5 md:mt-[5.19rem]">
             <div className="fx_col text-center gap-6">
                 <TextDynamic
                     text={headerText}
-                    className={"txt_1_875_bold text-[#121212]"}
+                    className={"txt_1_875_bold text-amber-700"}
                 />
                 <TextDynamic
                     text={subHeaderText}
@@ -51,70 +47,29 @@ export default function PasswordFormComponent({
                         label={"Confirm Password"}
                     />
 
-                    <div className="w-full grid grid-cols-2 gap-[.94rem]">
-                        <DynamicBtn
-                            className={"plain_btn"}
-                            text={
-                                <span
-                                    style={{
-                                        color: has8Chars
-                                            ? "#572C80"
-                                            : "#545454",
-                                    }}
-                                    className="txt_875"
-                                >
-                                    At least 8 characters
-                                </span>
-                            }
-                        />
+                    <div className="w-full grid grid-cols-2 gap-[.94rem] mt-[1.88rem]">
+                        {passwordChecks.map((item) => {
+                            const isValid = item.valid(pswd);
 
-                        <DynamicBtn
-                            className={"plain_btn"}
-                            text={
-                                <span
-                                    style={{
-                                        color: hasUpperCase
-                                            ? "#572C80"
-                                            : "#545454",
-                                    }}
-                                    className="txt_875"
-                                >
-                                    One upper case letter
-                                </span>
-                            }
-                        />
-
-                        <DynamicBtn
-                            className={"plain_btn"}
-                            text={
-                                <span
-                                    style={{
-                                        color: hasNumber
-                                            ? "#572C80"
-                                            : "#545454",
-                                    }}
-                                    className="txt_875"
-                                >
-                                    At least one number
-                                </span>
-                            }
-                        />
-
-                        <DynamicBtn
-                            className={"plain_btn"}
-                            text={
-                                <span
-                                    style={{
-                                        color: hasSymbol
-                                            ? "#572C80"
-                                            : "#545454",
-                                    }}
-                                    className="txt_875"
-                                >
-                                    Use a symbol (e.g. !@#)
-                                </span>
-                            }
-                        />
+                            return (
+                                <DynamicBtn
+                                    key={item.label}
+                                    className="plain_btn"
+                                    text={
+                                        <span
+                                            style={{
+                                                color: isValid
+                                                    ? passwordOk
+                                                    : passwordDefault,
+                                            }}
+                                            className="txt_875"
+                                        >
+                                            {item.label}
+                                        </span>
+                                    }
+                                />
+                            );
+                        })}
                     </div>
                 </div>
 

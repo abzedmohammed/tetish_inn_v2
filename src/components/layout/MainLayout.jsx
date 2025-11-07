@@ -10,6 +10,7 @@ import {
 } from "abzed-utils";
 import { avatarItemsFn } from "../../items_list/itemList";
 import { MainNavbar } from "../navigation";
+import { Outlet } from "react-router-dom";
 const { Header } = Layout;
 
 export default function MainLayout() {
@@ -25,11 +26,14 @@ export default function MainLayout() {
     const avatarItems = avatarItemsFn(handleLogout);
 
     return (
-        <MainNavbar
-            component={
-                <MainLayoutHeader user={user} avatarItems={avatarItems} />
-            }
-        />
+        <div className="w-full fx_col">
+            <MainNavbar
+                component={
+                    <MainLayoutHeader user={user} avatarItems={avatarItems} />
+                }
+            />
+            <Outlet />
+        </div>
     );
 }
 

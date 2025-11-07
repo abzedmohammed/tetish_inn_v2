@@ -1,10 +1,6 @@
-import {
-    AuthLogoComponent,
-    AuthSideComponent,
-    LoginFormComponent,
-} from "./auth_components";
+import { AuthLogoComponent, LoginFormComponent } from "./auth_components";
 import { Form } from "antd";
-import { TextDynamic, useDynamicMutation } from "abzed-utils";
+import { useDynamicMutation } from "abzed-utils";
 import { loginAction } from "../../actions/authActions";
 import { notifyError } from "../../utils";
 import { useEffect } from "react";
