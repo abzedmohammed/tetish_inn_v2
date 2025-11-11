@@ -380,10 +380,10 @@ export const AttachSvg = ({
 
 //CART
 
-export const CartSvg = () => (
+export const CartSvg = ({ className = "h-7 w-7" }) => (
     <svg
         xmlns="http://www.w3.org/2000/svg"
-        className="h-7 w-7"
+        className={className}
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"

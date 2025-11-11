@@ -8,10 +8,11 @@ import { Badge } from "antd";
 
 export default function MainNavbar({ component }) {
     const { isActive } = useSelector((state) => state.auth);
+    const { cart, totalPrice } = useSelector((state) => state.cart);
 
     const items = {
-        cart: [],
-        totalPrice: 0,
+        cart,
+        totalPrice,
     };
 
     const cartItems = navCartItemsFn({
@@ -62,7 +63,7 @@ export default function MainNavbar({ component }) {
                     overlayClassName="cart_dropdown"
                     items={cartItems}
                     triggerButton={
-                        <Badge count={5} color="#FCD34D">
+                        <Badge count={cart?.length || 0} color="#FCD34D">
                             <CartSvg />
                         </Badge>
                     }

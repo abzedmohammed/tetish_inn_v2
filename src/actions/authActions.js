@@ -3,7 +3,7 @@ import { authStateFn, userIdStateFn } from "../features/auth/authSlice";
 import { notifyError, notifySuccess } from "../utils";
 import { jwtDecode } from "jwt-decode";
 
-const handleLoginSuccess = ({ token, dispatch, successMessage }) => {
+export const handleLoginSuccess = ({ token, dispatch, successMessage }) => {
     if (token) {
         localStorage.setItem("token", token);
         const decoded = jwtDecode(token);

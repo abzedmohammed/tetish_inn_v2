@@ -1,17 +1,24 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { HomeCheckout, SnackCard } from "./components";
-import { CardSkeleton } from "abzed-utils";
+import { CardSkeleton, usePaginatedQuery } from "abzed-utils";
+import { fetchSnacks } from "../actions/homeActions";
 
 export default function Home() {
     const dispatch = useDispatch();
 
-    const isLoading = true
-    const sweetSnacks = [];
-    const saltySnacks = [];
-    const hotSnacks = [];
-    const snacks = [];
+    const {dataList, isLoading, refetch, } = usePaginatedQuery({
+        queryConfig: fetchSnacks,
+    })
+
+    const sweetSnacks = dataList?.filter((snack) => snack.snkType === 'SWEET') || [];
+    const saltySnacks = dataList?.filter((snack) => snack.snkType === 'SALTY') || [];
+    const hotSnacks = dataList?.filter((snack) => snack.snkType === 'HOT') || [];
     const handleSnackDetails = () => {};
+
+    useEffect(() => {
+        refetch();
+    }, [])
 
     return (
         <div className="container-fluid mx-10 mt-6 mb-14">
@@ -30,7 +37,7 @@ export default function Home() {
                             </span>{" "}
                             Snacks
                         </h2>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5">
                             {sweetSnacks.length === 0 ? (
                                 <p>No sweet snacks available</p>
                             ) : (
@@ -40,7 +47,7 @@ export default function Home() {
                                             key={snack.snkId}
                                             snack={snack}
                                             dispatch={dispatch}
-                                            snacks={snacks}
+                                            snacks={dataList}
                                             handleSnackDetails={
                                                 handleSnackDetails
                                             }
@@ -56,7 +63,7 @@ export default function Home() {
                             </span>{" "}
                             Snacks
                         </h2>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5">
                             {saltySnacks.length === 0 ? (
                                 <p>No salty snacks available</p>
                             ) : (
@@ -66,7 +73,7 @@ export default function Home() {
                                             key={snack.snkId}
                                             snack={snack}
                                             dispatch={dispatch}
-                                            snacks={snacks}
+                                            snacks={dataList}
                                             handleSnackDetails={
                                                 handleSnackDetails
                                             }
@@ -82,9 +89,9 @@ export default function Home() {
                             </span>{" "}
                             Snacks
                         </h2>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5">
                             {hotSnacks.length === 0 ? (
-                                <p>No hot snacks available</p>
+                                <p>No hot snacks available</p>  
                             ) : (
                                 hotSnacks.map((snack) => {
                                     return (
@@ -92,7 +99,7 @@ export default function Home() {
                                             key={snack.snkId}
                                             snack={snack}
                                             dispatch={dispatch}
-                                            snacks={snacks}
+                                            snacks={dataList}
                                             handleSnackDetails={
                                                 handleSnackDetails
                                             }

@@ -1,15 +1,24 @@
-import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCart, removeFromCart } from "../../features/cart/cartSlice";
+import { formatMoney } from "abzed-utils";
 
-export default function SnackCard({
-    snack,
-    handleSnackDetails,
-    snacks,
-    dispatch,
-    removeFromCart,
-    addToCart,
-}) {
+export default function SnackCard({ snack, handleSnackDetails }) {
+    const dispatch = useDispatch();
+
+    const { cart } = useSelector((state) => state.cart);
+
+    const isItemInCart = cart.some((item) => item.snkId === snack.snkId);
+
+    const removeItemFn = () => {
+        dispatch(removeFromCart(snack.snkId));
+    };
+
+    const addItemFn = () => {
+        dispatch(addToCart(snack));
+    };
+
     return (
-        <div key={snack.snkId} className="w-full max-w-sm bg-white">
+        <div className="w-full fx_grow bg-white">
             <div className="flex justify-center items-center">
                 <img
                     className="border-4 rounded-lg border-amber-500 w-full h-48 object-cover"
@@ -19,12 +28,12 @@ export default function SnackCard({
             </div>
 
             <div className="px-5 p-5 rounded-lg border border-amber-500">
-                <div className="flex items-center justify-between pb-3">
+                <div className="fx_btwn_center pb-3">
                     <h5 className="text-xl text-amber-900 font-bold tracking-tight truncate">
                         {snack.snkName}
                     </h5>
-                    <span className="text-xl w-32 font-bold text-amber-900 dark:text-white">
-                        KES {snack.snkPrice}
+                    <span className="text-xl font-bold text-amber-900">
+                        {formatMoney(snack.snkPrice)}
                     </span>
                 </div>
 
@@ -38,11 +47,9 @@ export default function SnackCard({
                     </button>
 
                     <SnackCartComponent
-                        snacks={snacks}
-                        dispatch={dispatch}
-                        snack={snack}
-                        removeFromCart={removeFromCart}
-                        addToCart={addToCart}
+                        isItemInCart={isItemInCart}
+                        removeFromCart={removeItemFn}
+                        addToCart={addItemFn}
                     />
                 </div>
             </div>
@@ -50,25 +57,19 @@ export default function SnackCard({
     );
 }
 
-const SnackCartComponent = ({
-    snacks,
-    dispatch,
-    snack,
-    removeFromCart,
-    addToCart,
-}) => {
+const SnackCartComponent = ({ isItemInCart, removeFromCart, addToCart }) => {
     return (
         <>
-            {snacks.cart.find((item) => item.snkId === snack.snkId) ? (
+            {isItemInCart ? (
                 <button
-                    onClick={() => dispatch(removeFromCart(snack.snkId))}
+                    onClick={removeFromCart}
                     className="text-amber-900 bg-amber-300 hover:bg-amber-800 hover:text-white focus:ring-4 focus:outline-none focus:ring-amber-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                 >
                     Remove
                 </button>
             ) : (
                 <button
-                    onClick={() => dispatch(addToCart(snack))}
+                    onClick={addToCart}
                     className="text-amber-900 bg-amber-300 hover:bg-amber-800 hover:text-white focus:ring-4 focus:outline-none focus:ring-amber-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                 >
                     Add to cart

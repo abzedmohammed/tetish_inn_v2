@@ -4,6 +4,7 @@ import storage from 'redux-persist/lib/storage';
 import crudReducer from '../features/crud/crudSlice';
 import authReducer from '../features/auth/authSlice';
 import globalReducer from '../features/global/globalSlice';
+import cartReducer from '../features/cart/cartSlice';
 
 const persistConfig = {
 	key: 'root',
@@ -14,6 +15,7 @@ const rootReducer = combineReducers({
 	crud: crudReducer,
 	auth: authReducer,
 	global: globalReducer,
+	cart: cartReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

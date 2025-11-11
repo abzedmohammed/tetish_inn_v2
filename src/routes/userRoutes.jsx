@@ -1,5 +1,5 @@
 import { MainLayout } from "../components/layout";
-import { ErrorPage, Home, Profile } from "../pages";
+import { CartList, CheckOut, ErrorPage, Home, Profile } from "../pages";
 import ProtectedRoute from "../ProtectedRoute";
 
 export const userRoutes = [
@@ -24,6 +24,14 @@ export const userRoutes = [
                     {
                         path: "profile",
                         element: <Profile />,
+                    },
+                    {
+                        path: "cart",
+                        element: <CartList />,
+                    },
+                    {
+                        path: "orders/confirm",
+                        element: <CheckOut />,
                     },
                 ],
             },
