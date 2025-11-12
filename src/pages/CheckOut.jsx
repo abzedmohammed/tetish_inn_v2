@@ -7,7 +7,6 @@ import { notifyError } from "../utils";
 import { emptyCart } from "../features/cart/cartSlice";
 
 export default function CheckOut() {
-
     const { isActive, user } = useSelector((state) => state.auth);
     const { cart, totalPrice } = useSelector((state) => state.cart);
 
@@ -17,12 +16,10 @@ export default function CheckOut() {
         onSuccess: ({ response, dispatch }) => {
             saveOrder.onSuccess({ response, dispatch });
             dispatch(emptyCart());
-            setorder(true);
         },
     });
 
     const [message, setmessage] = useState("");
-    const [order, setorder] = useState(false);
 
     const submitOrder = () => {
         let cartData = cart.map((item) => {
@@ -151,36 +148,6 @@ export default function CheckOut() {
                         </div>
                     </>
                 )}
-                {isActive && order ? (
-                    <>
-                        <div className="flex justify-center flex-col mx-auto">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                strokeWidth={1.5}
-                                stroke="currentColor"
-                                className="w-52 h-52 text-amber-600 text-center ml-auto mr-auto"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                                />
-                            </svg>
-                            <p className="mt-4 text-amber-800 text-2xl text-center">
-                                Your order has been made. Thank you for shopping
-                                with us
-                            </p>
-                            <Link
-                                to="/snacks"
-                                className="fx_center h-7 text-center text-amber-900 bg-amber-400 hover:bg-amber-700 hover:text-white"
-                            >
-                                Back to snacks page
-                            </Link>
-                        </div>
-                    </>
-                ) : null}
             </div>
         </div>
     );

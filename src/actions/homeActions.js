@@ -9,6 +9,11 @@ export const fetchSnacks = {
 	queryFn: async (body) => await axiosInstance.post('/api/snacks/all', body),
 };
 
+export const fetchUserSummary = {
+	queryKey: ['user-summary'],
+	queryFn: async () => await axiosInstance.get('/api/user/user-summary'),
+};
+
 
 // SAVE AND UPDATE ACTIONS
 

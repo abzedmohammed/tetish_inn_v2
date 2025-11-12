@@ -1,128 +1,143 @@
-import { PageHeader } from "../components/navigation";
-import flags from "react-phone-number-input/flags";
-import 'react-phone-number-input/style.css'
-
-import { Form } from "antd";
-import { adminSave } from "../actions/adminActions";
-import { notifyError, notifySuccess } from "../utils";
+import dayjs from "dayjs";
 import { useSelector } from "react-redux";
-import {
-    FormInput,
-    FormInputEmail,
-    FormInputPassword,
-    FormInputPhone,
-    useDynamicMutation,
-    validatePassword,
-    AntdForm,
-} from "abzed-utils";
+import { Link } from "react-router-dom";
+import { fetchUserSummary } from "../actions/homeActions";
+import { CardSkeleton, formatMoney, usePaginatedQuery } from "abzed-utils";
 import { useEffect } from "react";
 
 export default function Profile() {
-    const { user } = useSelector((state) => state.auth);
 
-    const [form] = Form.useForm();
+    const {
+		dataList,
+		isLoading,
+		refetch,
+	} = usePaginatedQuery({
+		queryConfig: fetchUserSummary,
+	});
 
-    const saveMutation = useDynamicMutation({
-        mutationFn: adminSave.mutationFn,
-        onError: notifyError,
-        onSuccess: () => {
-            notifySuccess("Profile updated successfully");
-        },
-    });
+    console.log(dataList);
 
-    const onFinish = async (values) => {
-        let isPasswordValid = validatePassword(values.usrSecret);
 
-        if (typeof isPasswordValid === "string") {
-            return notifyError(isPasswordValid);
-        }
-
-        if (values.usrSecret.trim() !== values.usrSecretConfirm.trim()) {
-            return notifyError("Passwords do not match");
-        }
-
-        saveMutation.mutate({
-            usrId: user?.usrId,
-            usrSecret: values.usrSecret.trim(),
-            ...values,
-        });
-    };
+    function getOrderSubtotal(price, quantity) {
+		if (!quantity) return true;
+		return price * quantity;
+	}
 
     useEffect(() => {
-        form.setFieldsValue({
-            ...user,
-        });
-    }, [user, form]);
+        refetch();
+    }, [])
+
+	if (isLoading) return <CardSkeleton width={'100%'} height={'20rem'} />
 
     return (
-        <div className="w-full h-full fx_col gap-10">
-            <PageHeader
-                header="Profile"
-                body="Manage your personal profile"
-                btnText="Save Changes"
-                btnFn={() => {}}
-            />
+        <div className='p-5 md:container md:mx-auto mb-14'>
+				<div className='card p-5 md:p-24 border-b-8 border-r-4 shadow-md shadow-amber-500 border-amber-800'>
+					<h1 className='text-8xl text-amber-800 truncate'>
+						<span className='uppercase '>
+							<span className='md:hidden block capitalize'>Hi...</span>
+							{dataList?.userName}<span className='hidden md:lowercase md:inline'>'s</span>{' '}
+							<span className='hidden float-right md:inline'>Dashboard</span>
+						</span>
+					</h1>
+				</div>
 
-            <AntdForm form={form} handleSubmit={onFinish} formName={"event"}>
-                <div className="admin_dash_main_card">
-                    <div className="w-full fx_col gap-[1rem] mt-[1rem] px-3 lg:px-[13rem] py-[1rem]">
-                        <FormInput
-                            readOnly
-                            required={false}
-                            inputClassName={"primary_input"}
-                            inputName={"usrFullName"}
-                            label={"Full Name"}
-                        />
+				<div className=''>
+					<h2 className='text-3xl text-amber-900 border-b-4 border-amber-400 my-6 w-fit'>
+						Account Summary
+					</h2>
 
-                        <FormInputEmail
-                            inputClassName={"primary_input"}
-                            inputName={"usrEmail"}
-                            label={"Email"}
-                        />
+					<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+						<div className='stats text-center'>
+							<div className='stat'>
+								<div className='stat-title text-2xl text-amber-900 font-bold'>
+									Total Orders
+								</div>
+								<div className='stat-value text-6xl text-amber-800 font-extrabold'>
+									{dataList?.orders}
+								</div>
+								<div className='stat-desc text-2xl text-amber-900'>
+									Joined on,{' '}
+									<span className='underline'>
+										{dayjs(dataList?.joinDate).format('MMMM Do YYYY')}
+									</span>{' '}
+								</div>
+							</div>
+						</div>
 
-                        <FormInputPhone
-                            flags={flags}
-                            inputClassName={"primary_input"}
-                            inputName={"usrMobileNumber"}
-                            label={"Phone Number"}
-                        />
+						<div className='stats bg-amber-500 text-primary-content shadow-lg shadow-amber-400'>
+							<div className='stat'>
+								<div className='text-white'>Account balance</div>
+								<div className='stat-value'>{formatMoney(dataList?.balance)}</div>
+								<div className='stat-actions'>
+									{
+                                        dataList?.balance < 1000 &&
+                                        <label htmlFor='my-modal-4' className='btn btn-sm btn-outline text-white hover:bg-white font-bold hover:text-amber-800'>
+										Add funds
+                                        </label>
+                                    }
+								</div>
+							</div>
 
-                        <FormInput
-                            readOnly
-                            required={false}
-                            inputClassName={"primary_input"}
-                            inputName={"usrNationalId"}
-                            label={"ID number (National ID/ Passport)"}
-                        />
+							<div className='stat'>
+								<div className='text-white'>Most recent order</div>
+								<div className='stat-value'>
+									{formatMoney(dataList?.recentOrder)}
+								</div>
+								<div className='stat-actions'>
+									{dataList?.recentOrder && (
+										<Link to="/orders/id/edit" className='btn btn-sm btn-outline text-white hover:bg-white font-bold hover:text-amber-800'>
+											Edit Order
+										</Link>
+									)}
+								</div>
+							</div>
+						</div>
+					</div>
 
-                        <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-5">
-                            <FormInputPassword
-                                inputClassName={
-                                    "primary_input transparent_input"
-                                }
-                                inputName={"usrSecretOld"}
-                                label={"Current password"}
-                            />
+					<div className='upcoming-events mt-3'>
+						<h5 className='text-3xl text-amber-900 border-b-4 border-amber-400 my-6 w-fit mb-6'>
+							Order History
+						</h5>
+						<div className='border-2 border-amber-500 p-3 rounded-2xl w-full'>
+							<ol className='flex flex-col md:flex-row md:justify-around items-center border-l border-gray-200 dark:border-gray-700'>
+								{dataList?.orderHistory ? (
+									dataList?.orderHistory.slice(0, 3).map((order) => {
+										return (
+											<li key={order.id} className=''>
+												{/* <div className="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -left-1.5 border border-white dark:border-gray-900 dark:bg-gray-700"></div> */}
+												<time className='mb-1 text-sm font-bold leading-none text-amber-400 '>
+													{dayjs(order.snack.updated_at).format(
+														'MMMM Do YYYY, h:mm a',
+													)}
+												</time>
+												<h3 className='text-lg font-bold text-amber-900'>
+													{order.snack.name}
+												</h3>
+												<p className='mb-4 text-base font-bold text-amber-900'>
+													Total KES{' '}
+													{getOrderSubtotal(order.snack.price, order.quantity)}
+												</p>
+											</li>
+										);
+									})
+								) : (
+									<h1 className='text-xl text-amber-900 font-semibold'>
+										Your order history will appear here!
+									</h1>
+								)}
+							</ol>
+						</div>
+					</div>
+				</div>
 
-                            <FormInputPassword
-                                inputClassName={
-                                    "primary_input transparent_input"
-                                }
-                                inputName={"usrSecret"}
-                                label={"New Password"}
-                            />
-
-                            <FormInputPassword
-                                inputClassName={
-                                    "primary_input transparent_input"
-                                }
-                                inputName={"usrSecretConfirm"}
-                                label={"Confirm Password"}
-                            />
+				<input type='checkbox' id='my-modal-4' className='modal-toggle' />
+				<label htmlFor='my-modal-4' className='modal cursor-pointer'>
+					<label className='modal-box relative w-fit' htmlFor=''>
+                        <div className=''>
+                            {/* <Payment /> */}
                         </div>
-                    </div>
-                </div>
-            </AntdForm>
-        </div>
+					</label>
+				</label>
+			</div>
     );
 }
